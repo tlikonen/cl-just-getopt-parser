@@ -153,10 +153,11 @@ The second element _option-name_ is either
     as "--help" from command line). The string must be at least two
     character long.
 
-The third element is optional but if it is non-nil it must be one of the
-following keyword symbols. `:required` means that this option requires
-an argument. `:optional` means that this option has an optional
-argument. Example value for this function's _options_ argument:
+The third element _option-argument_ is optional but if it is non-nil it
+must be one of the following keyword symbols. `:required` means that
+this option requires an argument. `:optional` means that this option has
+an optional argument. Example value for this function's
+_option-specification_ argument:
 
     ((:HELP #\h)     ; short option -h for help (no option argument)
      (:HELP "help")  ; long option --help (no option argument)
@@ -236,7 +237,7 @@ The function returns three values:
 
  3. List of unknown options. List's items are either characters or
     strings which represent command-line options which were not defined
-    in the _options-specification_.
+    in the _option-specification_.
 
 In all return values the list's items are in the same order as they were
 in the original command line.
