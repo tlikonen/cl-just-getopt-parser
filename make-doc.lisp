@@ -1,0 +1,171 @@
+(require 'sb-posix)
+(require 'sb-introspect)
+(require 'asdf)
+
+(asdf:initialize-source-registry
+ (list :source-registry
+       :ignore-inherited-configuration
+       (list :directory *default-pathname-defaults*)))
+(asdf:disable-output-translations)
+(with-open-stream (*standard-output* (make-broadcast-stream))
+  (asdf:load-system "just-getopt-parser"))
+
+(defun symbol-doc-type (symbol)
+  (let (docs)
+    (flet ((doc (symbol type key)
+             (push (list symbol key (documentation symbol type)) docs)))
+      (cond ((ignore-errors (macro-function symbol))
+             (doc symbol 'function :macro))
+            ((ignore-errors (symbol-function symbol))
+             (doc symbol 'function :function)))
+      (when (ignore-errors (symbol-value symbol))
+        (doc symbol 'variable :variable))
+      (cond ((subtypep symbol 'condition)
+             (doc symbol 'type :condition))
+            ((ignore-errors (find-class symbol))
+             (doc symbol 'type :class))))
+    docs))
+
+(defparameter *head*
+  "~
+Just Getopt Parser
+==================
+
+**Getopt-like command-line parser for the Common Lisp language**
+
+
+Introduction
+------------
+
+This Common Lisp package implements Unix Getopt command-line parser.
+Package's main interface is `getopt` function which parses the command
+line options and organizes them to valid options, other arguments and
+unknown arguments. For full documentation on package's programming
+interface see section _Interface (API)_ down below.
+
+
+Examples
+--------
+
+Example command line:
+
+    $ some-program -d3 -f one --file=two -xyz foo --none bar -v -- -v
+
+That command line could be parserd with the followin function call:
+
+    (getopt '(\"-d3\" \"-f\" \"one\" \"--file=two\" \"-xyz\" \"foo\"
+              \"--none\" \"bar\" \"-v\" \"--\" \"-v\")
+            '((:debug #\\d :optional)
+              (:file #\\f :required)
+              (:file \"file\" :required)
+              (:verbose #\\v))
+            :options-everywhere t)
+
+The function returns three values: (1) valid options and their
+arguments, (2) other arguments and (3) unknown options:
+
+    ((:DEBUG . \"3\") (:FILE . \"one\") (:FILE . \"two\") (:VERBOSE))
+    (\"foo\" \"bar\" \"-v\")
+    (#\\x #\\y #\\z \"none\")
+
+In programs it is probably the most convenient to call this function
+through `cl:multiple-value-bind` so that the return valuas are bound to
+different variables:
+
+    (multiple-value-bind (options other unknown)
+        (getopt COMMAND-LINE-ARGUMENTS '(...))
+
+      ...
+      )
+
+In practice there is probably also `cl:handler-bind` macro which handles
+error conditions by printing error messages, invoking `continue`
+restarts or transferring the program control elsewhere. Here is more
+thorough example:
+
+    (handler-bind
+        ((ambiguous-option
+           (lambda (condition)
+             (format *error-output* \"~~A~~%\" condition)
+             (invoke-restart 'continue)))
+         (unknown-option
+           (lambda (condition)
+             (format *error-output* \"~~A~~%\" condition)
+             (invoke-restart 'continue)))
+         (required-argument-missing
+           (lambda (condition)
+             (format *error-output* \"~~A~~%\" condition)
+             (exit-program :code 1)))
+         (argument-not-allowed
+           (lambda (condition)
+             (format *error-output* \"~~A Skipping the option.~~%\" condition)
+             (invoke-restart 'continue))))
+
+      (multiple-value-bind (options other unknown)
+          (getopt COMMAND-LINE-ARGUMENTS '(...)
+                  :prefix-match-long-options t
+                  :error-on-ambiguous-option t
+                  :error-on-unknown-option t
+                  :error-on-argument-missing t
+                  :error-on-argument-not-allowed t)
+
+        ...
+        ))
+
+
+Author and License
+------------------
+
+Author:  Teemu Likonen <<tlikonen@iki.fi>>
+
+PGP: [4E10 55DC 84E9 DFF6 13D7 8557 719D 69D3 2453 9450][PGP]
+
+No restrictions for use: this program is placed in the public domain.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+[PGP]: http://www.iki.fi/tlikonen/pgp-key.asc
+
+
+Interface (API)
+---------------
+
+")
+
+(defun print-doc (package &key (stream *standard-output*) (prefix "### "))
+  (format stream *head*)
+  (loop :with *package* := (find-package package)
+        :with *print-right-margin* := 72
+        :with *print-case* := :downcase
+        :with symbols := (sort (loop :for symbol
+                                       :being :each :external-symbol :in package
+                                     :collect symbol)
+                               #'string-lessp :key #'symbol-name)
+
+        :for (symbol type doc) :in (mapcan #'symbol-doc-type symbols)
+        :if (and doc (not (member symbol '(continue give-argument))))
+          :do
+
+             (format stream "~A" prefix)
+             (case type
+               (:function
+                (format stream "Function: `~A`" symbol)
+                (let ((ll (sb-introspect:function-lambda-list symbol)))
+                  (when ll
+                    (format stream "~%~%The lambda list:~%~%     ~S" ll))))
+               (:macro
+                (format stream "Macro: `~A`" symbol)
+                (let ((ll (sb-introspect:function-lambda-list symbol)))
+                  (when ll
+                    (format stream "~%~%The lambda list:~%~%     ~S" ll))))
+               (:variable (format stream "Variable: `~A`" symbol))
+               (:condition (format stream "Condition: `~A`" symbol))
+               (:class (format stream "Class: `~A`" symbol)))
+             (format stream "~%~%~A~%~%~%" doc)))
+
+
+(handler-case (print-doc "JUST-GETOPT-PARSER")
+  (error (c)
+    (format *error-output* "~A~%" c)))
