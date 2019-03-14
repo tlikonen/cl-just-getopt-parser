@@ -327,9 +327,10 @@ argument. It means that the argument is empty string."
                       (if prefix-match-long-options
                           (prefix-match-long-option
                            opt-name option-specification)
-                          (member opt-name option-specification
-                                  :key #'second
-                                  :test #'equal)))
+                          (let ((match (find opt-name option-specification
+                                             :key #'second
+                                             :test #'equal)))
+                            (if match (list match)))))
                     (osymbol (first (first option-spec)))
                     (oargument (third (first option-spec))))
 
@@ -339,7 +340,8 @@ argument. It means that the argument is empty string."
                   (when error-on-unknown-option
                     (error 'unknown-option :option opt-name)))
 
-                 ((> (length option-spec) 1)
+                 ((and prefix-match-long-options
+                       (> (length option-spec) 1))
                   (push opt-name unknown-options)
                   (when error-on-ambiguous-option
                     (error 'ambiguous-option
