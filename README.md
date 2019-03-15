@@ -168,7 +168,7 @@ The second element _option-name_ is either
     character long.
 
 The third element _option-argument_ is optional but if it is non-nil it
-must be one of the following keyword symbols. `:required` means that
+must be one of the following keyword symbols: `:required` means that
 this option requires an argument. `:optional` means that this option has
 an optional argument. Example value for this function's
 _option-specification_ argument:

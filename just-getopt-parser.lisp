@@ -173,15 +173,15 @@ The second element _option-name_ is either
     character long.
 
 The third element _option-argument_ is optional but if it is non-nil it
-must be one of the following keyword symbols. `:required` means that
-this option requires an argument. `:optional` means that this option has
+must be one of the following keyword symbols: `:required` means that
+this option requires an argument; `:optional` means that this option has
 an optional argument. Example value for this function's
 _option-specification_ argument:
 
-    ((:HELP #\\h)     ; short option -h for help (no option argument)
-     (:HELP \"help\")  ; long option --help (no option argument)
-     (:FILE \"file\" :REQUIRED) ; --file option which requires argument
-     (:DEBUG #\\d :OPTIONAL))  ; -d option with optional argument
+    ((:help #\\h)     ; short option -h for help (no option argument)
+     (:help \"help\")  ; long option --help (no option argument)
+     (:file \"file\" :required) ; --file option which requires argument
+     (:debug #\\d :optional))  ; -d option with optional argument
 
 Note that several options may have the same identifier _symbol_. This
 makes sense when short and long option represent the same meaning. See
