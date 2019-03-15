@@ -68,8 +68,8 @@ thorough example:
              (exit-program :code 1)))
          (argument-not-allowed
            (lambda (condition)
-             (format *error-output* "~A Skipping the option.~%" condition)
-             (invoke-restart 'skip-option))))
+             (format *error-output* "~A~%" condition)
+             (exit-program :code 1))))
 
       (multiple-value-bind (options other unknown)
           (getopt COMMAND-LINE-ARGUMENTS '(...)
@@ -117,6 +117,20 @@ options.
 that does not allow an argument but one is given with "--foo=...".
 Function `option-name` can be used to read option's name from the
 condition object.
+
+
+### Condition: `required-argument-missing`
+
+`getopt` function may signal this condition when it parses an option
+that required an argument but there is none. Function `option-name` can
+be used to read option's name from the condition object.
+
+
+### Condition: `unknown-option`
+
+`getopt` function may signal this condition when it find an unknown
+condition. Function `option-name` can be used to read option's name from
+the condition object.
 
 
 ### Function: `getopt`
@@ -280,19 +294,5 @@ for this option.
 
 Option --foo= is valid format when option has required or optional
 argument. It means that the argument is empty string.
-
-
-### Condition: `required-argument-missing`
-
-`getopt` function may signal this condition when it parses an option
-that required an argument but there is none. Function `option-name` can
-be used to read option's name from the condition object.
-
-
-### Condition: `unknown-option`
-
-`getopt` function may signal this condition when it find an unknown
-condition. Function `option-name` can be used to read option's name from
-the condition object.
 
 
