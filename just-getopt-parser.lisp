@@ -369,10 +369,10 @@ argument. It means that the argument is empty string."
                                  :option opt-name))
                         (push (cons osymbol arg) parsed-options))
                     (continue ()
-                      :report "Continue without argument"
+                      :report "Continue without argument."
                       (push (cons osymbol nil) parsed-options))
                     (give-argument (value)
-                      :report "Give argument for the option"
+                      :report "Give argument for the option."
                       (check-type value string)
                       (push (cons osymbol value) parsed-options))))
 
@@ -384,7 +384,7 @@ argument. It means that the argument is empty string."
                   (push (cons osymbol opt-arg) parsed-options))))
 
            (continue ()
-             :report "Skip the option and continue")))
+             :report "Skip the option and continue.")))
 
         ;; Short options
         ((and (> (length argument) 1)
@@ -429,10 +429,10 @@ argument. It means that the argument is empty string."
                                         :option character)
                                  (push (cons osymbol arg) parsed-options)))
                          (continue ()
-                           :report "Continue without argument"
+                           :report "Continue without argument."
                            (push (cons osymbol nil) parsed-options))
                          (give-argument (value)
-                           :report "Give argument for the option"
+                           :report "Give argument for the option."
                            (check-type value string)
                            (push (cons osymbol value) parsed-options))))
 
@@ -446,7 +446,7 @@ argument. It means that the argument is empty string."
                        (push (cons osymbol nil) parsed-options))))
 
                 (continue ()
-                  :report "Skip the option and continue"))))
+                  :report "Skip the option and continue."))))
 
         ;; Other arguments
         (t (push argument other-arguments)
