@@ -79,7 +79,7 @@ different variables:
       )
 
 In practice there is probably also `cl:handler-bind` macro which handles
-error conditions by printing error messages, invoking `continue`
+error conditions by printing error messages, invoking `skip-option`
 restarts or transferring the program control elsewhere. Here is more
 thorough example:
 
@@ -87,11 +87,11 @@ thorough example:
         ((ambiguous-option
            (lambda (condition)
              (format *error-output* \"~~A~~%\" condition)
-             (invoke-restart 'continue)))
+             (invoke-restart 'skip-option)))
          (unknown-option
            (lambda (condition)
              (format *error-output* \"~~A~~%\" condition)
-             (invoke-restart 'continue)))
+             (invoke-restart 'skip-option)))
          (required-argument-missing
            (lambda (condition)
              (format *error-output* \"~~A~~%\" condition)
@@ -99,7 +99,7 @@ thorough example:
          (argument-not-allowed
            (lambda (condition)
              (format *error-output* \"~~A Skipping the option.~~%\" condition)
-             (invoke-restart 'continue))))
+             (invoke-restart 'skip-option))))
 
       (multiple-value-bind (options other unknown)
           (getopt COMMAND-LINE-ARGUMENTS '(...)
@@ -145,25 +145,24 @@ Interface (API)
                                #'string-lessp :key #'symbol-name)
 
         :for (symbol type doc) :in (mapcan #'symbol-doc-type symbols)
-        :if (and doc (not (member symbol '(continue give-argument))))
-          :do
+        :if doc :do
 
-             (format stream "~A" prefix)
-             (case type
-               (:function
-                (format stream "Function: `~A`" symbol)
-                (let ((ll (sb-introspect:function-lambda-list symbol)))
-                  (when ll
-                    (format stream "~%~%The lambda list:~%~%     ~S" ll))))
-               (:macro
-                (format stream "Macro: `~A`" symbol)
-                (let ((ll (sb-introspect:function-lambda-list symbol)))
-                  (when ll
-                    (format stream "~%~%The lambda list:~%~%     ~S" ll))))
-               (:variable (format stream "Variable: `~A`" symbol))
-               (:condition (format stream "Condition: `~A`" symbol))
-               (:class (format stream "Class: `~A`" symbol)))
-             (format stream "~%~%~A~%~%~%" doc)))
+          (format stream "~A" prefix)
+          (case type
+            (:function
+             (format stream "Function: `~A`" symbol)
+             (let ((ll (sb-introspect:function-lambda-list symbol)))
+               (when ll
+                 (format stream "~%~%The lambda list:~%~%     ~S" ll))))
+            (:macro
+             (format stream "Macro: `~A`" symbol)
+             (let ((ll (sb-introspect:function-lambda-list symbol)))
+               (when ll
+                 (format stream "~%~%The lambda list:~%~%     ~S" ll))))
+            (:variable (format stream "Variable: `~A`" symbol))
+            (:condition (format stream "Condition: `~A`" symbol))
+            (:class (format stream "Class: `~A`" symbol)))
+          (format stream "~%~%~A~%~%~%" doc)))
 
 
 (handler-case (print-doc "JUST-GETOPT-PARSER")

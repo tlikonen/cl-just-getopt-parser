@@ -49,7 +49,7 @@ different variables:
       )
 
 In practice there is probably also `cl:handler-bind` macro which handles
-error conditions by printing error messages, invoking `continue`
+error conditions by printing error messages, invoking `skip-option`
 restarts or transferring the program control elsewhere. Here is more
 thorough example:
 
@@ -57,11 +57,11 @@ thorough example:
         ((ambiguous-option
            (lambda (condition)
              (format *error-output* "~A~%" condition)
-             (invoke-restart 'continue)))
+             (invoke-restart 'skip-option)))
          (unknown-option
            (lambda (condition)
              (format *error-output* "~A~%" condition)
-             (invoke-restart 'continue)))
+             (invoke-restart 'skip-option)))
          (required-argument-missing
            (lambda (condition)
              (format *error-output* "~A~%" condition)
@@ -69,7 +69,7 @@ thorough example:
          (argument-not-allowed
            (lambda (condition)
              (format *error-output* "~A Skipping the option.~%" condition)
-             (invoke-restart 'continue))))
+             (invoke-restart 'skip-option))))
 
       (multiple-value-bind (options other unknown)
           (getopt COMMAND-LINE-ARGUMENTS '(...)
@@ -187,11 +187,11 @@ object contains the option's name and it can be read with function
 call `(option-name <condition>)`. Function call `(option-matches
 <condition>)` returns a list of option matches (strings). Also, the
 condition object can be printed as an error message for user. There is
-also `continue` restart available. When invoked the ambiguous option is
-skipped and the function will continue parsing the command line.
-Ambiguous options are always also unknown options: if `ambiguous-option`
-condition is not signaled then the condition for unknown option can be
-signaled. See the next paragraph.
+also `skip-option` restart available. When it is invoked the ambiguous
+option is skipped and the function will continue parsing the command
+line. Ambiguous options are always also unknown options: if
+`ambiguous-option` condition is not signaled then the condition for
+unknown option can be signaled. See the next paragraph.
 
 If function's key argument `error-on-unknown-option` is non-nil and the
 function finds an uknown option on the command line the function signals
@@ -199,7 +199,7 @@ error condition `unknown-option`. The condition object includes the name
 of the unknown option which can be read with function `(option-name
 <condition>)`. The return value is of type character or string for short
 or long options respectively. You can also just print the condition
-object: it gives a reasonable error message. There is also `continue`
+object: it gives a reasonable error message. There is also `skip-option`
 restart available. The invoked restart skips the unknown option and
 continues parsing the command line.
 
@@ -209,9 +209,10 @@ sees an option which required argument (keyword `:required`) but there
 is none. The condition object contains the name of the option which can
 be read with function `(option-name <condition>)`. You can also just
 print the condition object for user. It's the error message. There are
-two restarts available: `continue` restart accepts the missing
-argument (value nil) and continues with the parser; `give-argument`
-restart must be invoked with a new argument (string) for the option.
+two restarts available: `give-argument` restart can be invoked with a
+optional argument (string or nil) which will be passed as a new argument
+for the option; restart `skip-option` will just skip this option and
+continue parsing.
 
 Key argument `error-on-argument-not-allowed`, if non-nil, makes this
 function to signal error condition `argument-not-allowed` if there is an
@@ -220,8 +221,8 @@ Such option is always listed as unknown option with name "foo=" in
 function's return value. The condition object can be printed to user as
 error message. The object also contains the name of the option which can
 be read with `(option-name <condition>)` function call. There is
-`continue` restart available. When invoked the function continues
-parsing the command line.
+`skip-option` restart available. When the restart is invoked the
+function continues parsing the command line.
 
 
 #### Return values
