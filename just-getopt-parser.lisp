@@ -35,9 +35,10 @@ the condition object.")
   (:report
    (lambda (condition stream)
      (format stream "Unknown option \"~A\"."
-             (typecase (option-name condition)
-               (string (format nil "--~A" (option-name condition)))
-               (character (format nil "-~C" (option-name condition))))))))
+             (let ((name (option-name condition)))
+               (typecase name
+                 (string (format nil "--~A" name))
+                 (character (format nil "-~C" name))))))))
 
 (define-condition ambiguous-option (argument-error)
   ((matches :reader option-matches :initarg :matches))
@@ -62,9 +63,10 @@ be used to read option's name from the condition object.")
   (:report
    (lambda (condition stream)
      (format stream "Required argument missing for option \"~A\"."
-             (typecase (option-name condition)
-               (string (format nil "--~A" (option-name condition)))
-               (character (format nil "-~C" (option-name condition))))))))
+             (let ((name (option-name condition)))
+               (typecase name
+                 (string (format nil "--~A" name))
+                 (character (format nil "-~C" name))))))))
 
 (define-condition argument-not-allowed (argument-error)
   ()
