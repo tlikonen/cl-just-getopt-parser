@@ -128,7 +128,7 @@ be used to read option's name from the condition object.
 
 ### Condition: `unknown-option`
 
-`getopt` function may signal this condition when it find an unknown
+`getopt` function may signal this condition when it finds an unknown
 condition. Function `option-name` can be used to read option's name from
 the condition object.
 
