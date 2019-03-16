@@ -404,7 +404,7 @@ argument. It means that the argument is empty string."
                          (oargument (third option-spec)))
 
                     (cond
-                      ((not option-spec)
+                      ((null option-spec)
                        (push character unknown-options)
                        (when error-on-unknown-option
                          (error 'unknown-option :option character)))
