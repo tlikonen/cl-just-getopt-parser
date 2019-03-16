@@ -38,8 +38,8 @@ arguments, (2) other arguments and (3) unknown options:
     ("foo" "bar" "-v")
     (#\x #\y #\z "none")
 
-In programs it is probably the most convenient to call this function
-through `cl:multiple-value-bind` so that the return valuas are bound to
+In programs it is probably convenient to call this function through
+`cl:multiple-value-bind` so that the return values are bound to
 different variables:
 
     (multiple-value-bind (options other unknown)
