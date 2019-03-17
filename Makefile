@@ -1,2 +1,2 @@
-README.md: just-getopt-parser.lisp make-doc.lisp
-	sbcl --script make-doc.lisp >$@
+README.md: just-getopt-parser.lisp print-doc.lisp readme.lisp
+	sbcl --script readme.lisp >$@
