@@ -111,15 +111,8 @@ The Programming Interface
 
 (require 'sb-posix)
 (require 'sb-introspect)
-(require 'asdf)
 
-(asdf:initialize-source-registry
- (list :source-registry
-       :ignore-inherited-configuration
-       (list :directory *default-pathname-defaults*)))
-(asdf:disable-output-translations)
-(with-open-stream (*standard-output* (make-broadcast-stream))
-  (asdf:load-system "just-getopt-parser"))
+(load "just-getopt-parser.lisp")
 
 (defun symbol-doc-type (symbol)
   (let (docs)
