@@ -11,7 +11,7 @@ This Common Lisp package implements Unix Getopt command-line parser.
 Package's main interface is `getopt` function which parses the command
 line options and organizes them to valid options, other arguments and
 unknown arguments. For full documentation on package's programming
-interface see section _Interface (API)_ down below.
+interface see section _The Programming Interface_ down below.
 
 
 Examples
@@ -83,10 +83,10 @@ thorough example:
         ))
 
 
-Author and License
-------------------
+License and Source Code
+-----------------------
 
-Author:  Teemu Likonen <<tlikonen@iki.fi>>
+Author: Teemu Likonen <<tlikonen@iki.fi>>
 
 PGP: [4E10 55DC 84E9 DFF6 13D7 8557 719D 69D3 2453 9450][PGP]
 
@@ -96,11 +96,14 @@ This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+The source code repository:
+<https://github.com/tlikonen/cl-just-getopt-parser>
+
 [PGP]: http://www.iki.fi/tlikonen/pgp-key.asc
 
 
-Interface (API)
----------------
+The Programming Interface
+-------------------------
 
 ### Condition: `ambiguous-option`
 
