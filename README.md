@@ -164,10 +164,10 @@ option was present in the command line.
 The second element _option-name_ is either
 
  1. a character specifying a short option name (for example `#\h`,
-    entered as `-h` from command line)
+    entered as `-h` in command line)
 
  2. a string specifying a long option (for example `"help"`, entered
-    as `--help` from command line). The string must be at least two
+    as `--help` in command line). The string must be at least two
     characters long.
 
 The third element _option-argument_ is optional but if it is non-nil it
