@@ -7,11 +7,14 @@ Just Getopt Parser
 Introduction
 ------------
 
-This Common Lisp package implements Unix Getopt command-line parser.
+_Just Getopt Parser_ is a Common Lisp package that implements Unix
+Getopt command-line parser. The intention is to be just that: the parser
+functionality with clear Lisp programming interface and nothing more.
 Package's main interface is `getopt` function which parses the command
 line options and organizes them to valid options, other arguments and
-unknown arguments. For full documentation on package's programming
-interface see section _The Programming Interface_ down below.
+unknown arguments. There are also optional conditions for error
+situations. For full documentation on package's programming interface
+see section _The Programming Interface_ down below.
 
 
 Examples
