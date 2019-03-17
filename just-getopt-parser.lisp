@@ -332,6 +332,7 @@ argument. It means that the argument is empty string."
                                              :test #'equal)))
                             (if match (list match)))))
                     (osymbol (first (first option-spec)))
+                    (oname (second (first option-spec)))
                     (oargument (third (first option-spec))))
 
                (cond
@@ -352,9 +353,9 @@ argument. It means that the argument is empty string."
 
                  ((and (not oargument)
                        opt-arg)
-                  (push (format nil "~A=" opt-name) unknown-options)
+                  (push (format nil "~A=" oname) unknown-options)
                   (when error-on-argument-not-allowed
-                    (error 'argument-not-allowed :option opt-name)))
+                    (error 'argument-not-allowed :option oname)))
 
                  ((and (not oargument)
                        (not opt-arg))
@@ -366,7 +367,7 @@ argument. It means that the argument is empty string."
                       (let ((arg (pop arguments)))
                         (when (and (null arg) error-on-argument-missing)
                           (error 'required-argument-missing
-                                 :option opt-name))
+                                 :option oname))
                         (push (cons osymbol arg) parsed-options))
                     (give-argument (&optional argument)
                       :report "Give argument for the option."
