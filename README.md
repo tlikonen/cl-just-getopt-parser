@@ -24,7 +24,7 @@ Example command line:
 
     $ some-program -d3 -f one --file=two -xyz foo --none bar -v -- -v
 
-That command line could be parserd with the followin function call:
+That command line could be parsed with the following function call:
 
     (getopt '("-d3" "-f" "one" "--file=two" "-xyz" "foo"
               "--none" "bar" "-v" "--" "-v")
