@@ -14,9 +14,9 @@ Getopt command-line parser. The intention is to be just that: the parser
 functionality with clear Lisp programming interface and nothing more.
 Package's main interface is `getopt` function which parses the command
 line options and organizes them to valid options, other arguments and
-unknown arguments. There are also optional conditions for error
+unknown arguments. There are also optional Lisp conditions for error
 situations. For full documentation on package's programming interface
-see section _The Programming Interface_ down below.
+see section _The Programming Interface_ below.
 
 
 Examples
