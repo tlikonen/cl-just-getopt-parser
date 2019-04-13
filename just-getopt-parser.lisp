@@ -98,7 +98,7 @@ condition object.")
 (defun check-option-name (name)
   (assert (or (characterp name)
               (stringp name))
-          nil "Option name must be character or string.")
+          nil "Option name must be a character or a string.")
   (etypecase name
     (character (check-short-option-character name))
     (string (check-long-option-string name))))
@@ -107,7 +107,7 @@ condition object.")
   (assert (or (null field)
               (eql :required field)
               (eql :optional field))
-          nil "Options' argument type must be ~
+          nil "Options' argument type must be symbol ~
                 NIL, :REQUIRED or :OPTIONAL."))
 
 (defun check-duplicate-names (specification)
