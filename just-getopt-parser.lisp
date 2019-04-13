@@ -19,6 +19,11 @@
 
 (in-package #:just-getopt-parser)
 
+(defun format-option-name (name)
+  (etypecase name
+    (string (format nil "--~A" name))
+    (character (format nil "-~C" name))))
+
 (define-condition argument-error (error)
   ((option :reader option-name :initarg :option
            :type (or character string))))
@@ -32,10 +37,7 @@ the condition object.")
   (:report
    (lambda (condition stream)
      (format stream "Unknown option \"~A\"."
-             (let ((name (option-name condition)))
-               (typecase name
-                 (string (format nil "--~A" name))
-                 (character (format nil "-~C" name))))))))
+             (format-option-name (option-name condition))))))
 
 (define-condition ambiguous-option (argument-error)
   ((matches :reader option-matches :initarg :matches))
@@ -47,8 +49,8 @@ condition object. Function `option-matches` will return the matching
 options.")
   (:report
    (lambda (condition stream)
-     (format stream "Option \"--~A\" is ambiguous: ~{\"--~A\"~^, ~}."
-             (option-name condition)
+     (format stream "Option \"~A\" is ambiguous: ~{\"--~A\"~^, ~}."
+             (format-option-name (option-name condition))
              (option-matches condition)))))
 
 (define-condition required-argument-missing (argument-error)
@@ -60,10 +62,7 @@ be used to read option's name from the condition object.")
   (:report
    (lambda (condition stream)
      (format stream "Required argument missing for option \"~A\"."
-             (let ((name (option-name condition)))
-               (typecase name
-                 (string (format nil "--~A" name))
-                 (character (format nil "-~C" name))))))))
+             (format-option-name (option-name condition))))))
 
 (define-condition argument-not-allowed (argument-error)
   ()
@@ -74,8 +73,8 @@ Function `option-name` can be used to read option's name from the
 condition object.")
   (:report
    (lambda (condition stream)
-     (format stream "Argument is not allowed for option \"--~A\"."
-             (option-name condition)))))
+     (format stream "Argument is not allowed for option \"~A\"."
+             (format-option-name (option-name condition))))))
 
 (defun check-option-identifier (identifier)
   (assert (symbolp identifier)
