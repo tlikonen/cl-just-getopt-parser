@@ -131,13 +131,18 @@ condition object.")
   (check-duplicate-names specification))
 
 (defun prefix-match-long-option (name specification)
-  (loop :for opt-spec :in specification
+  (loop :with matches
+        :for opt-spec :in specification
         :for option-name := (second opt-spec)
-        :if (and (stringp option-name)
-                 (string= name option-name
-                          :end2 (min (length name)
-                                     (length option-name))))
-          :collect opt-spec))
+        :if (stringp option-name)
+          :do (cond ((string= name option-name)
+                     (return (list opt-spec)))
+                    ((string= name option-name
+                              :end2 (min (length name)
+                                         (length option-name)))
+                     (push opt-spec matches)))
+        :finally
+           (return (nreverse matches))))
 
 (defun getopt (arguments option-specification
                &key options-everywhere
