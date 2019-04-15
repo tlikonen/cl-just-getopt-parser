@@ -143,7 +143,7 @@ condition object.")
                &key options-everywhere
                  prefix-match-long-options error-on-ambiguous-option
                  error-on-unknown-option error-on-argument-missing
-                 error-on-argument-not-allowed )
+                 error-on-argument-not-allowed)
 
   "Parse command-line arguments like getopt.
 
