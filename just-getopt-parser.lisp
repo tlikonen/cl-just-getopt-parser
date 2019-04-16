@@ -142,7 +142,7 @@ condition object.")
                                          (length option-name)))
                      (push opt-spec matches)))
         :finally
-           (return (nreverse matches))))
+           (return (sort matches #'string< :key #'second))))
 
 (defun getopt (arguments option-specification
                &key options-everywhere
