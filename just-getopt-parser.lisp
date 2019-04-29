@@ -301,8 +301,8 @@ always be entered directly after the option name and `=`
 character (`--foo=ARG`). Otherwise (like in `--foo`) there is no
 argument for this option.
 
-Option `--foo=` is valid format when option has required or optional
-argument. It means that the argument is empty string."
+Option `--foo=` is valid format when the option requires argument or
+accepts optional argument. It means that the argument is empty string."
 
   (check-option-specification option-specification)
 
