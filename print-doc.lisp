@@ -11,7 +11,7 @@
 
 (require 'sb-introspect)
 
-(defun symbol-doc-type (symbol)
+(defun symbol-docs (symbol)
   (let (docs)
     (flet ((doc (symbol type key)
              (push (list symbol key (documentation symbol type)) docs)))
@@ -32,20 +32,19 @@
     :with *package* := (find-package package)
     :with *print-right-margin* := 72
     :with *print-case* := :downcase
-    :with data
-      := (sort (loop :for symbol
-                       :being :each :external-symbol :in package
-                     :append (symbol-doc-type symbol))
-               (lambda (l1 l2)
-                 (let ((s1 (symbol-name (first l1)))
-                       (s2 (symbol-name (first l2)))
-                       (t1 (symbol-name (second l1)))
-                       (t2 (symbol-name (second l2))))
-                   (or (string-lessp t1 t2)
-                       (and (string-equal t1 t2)
-                            (string-lessp s1 s2))))))
 
-    :for (symbol type doc) :in data
+    :for (symbol type doc)
+      :in (sort (loop :for symbol
+                        :being :each :external-symbol :in package
+                      :append (symbol-docs symbol))
+                (lambda (l1 l2)
+                  (let ((s1 (symbol-name (first l1)))
+                        (s2 (symbol-name (first l2)))
+                        (t1 (symbol-name (second l1)))
+                        (t2 (symbol-name (second l2))))
+                    (or (string-lessp t1 t2)
+                        (and (string-equal t1 t2)
+                             (string-lessp s1 s2))))))
 
     :if doc :do
 
