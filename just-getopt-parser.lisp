@@ -264,7 +264,7 @@ The function returns three values:
     which were not defined in the `option-specification`.
 
 In all three return values the list's items are in the same order as
-they were in the original command line.
+they were given in the function's `arguments` argument.
 
 
 #### Parsing rules for short options
