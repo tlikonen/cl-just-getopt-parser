@@ -153,21 +153,21 @@ condition object.")
 
   "Parse command-line arguments like getopt.
 
-The _arguments_ is a list of strings and contains the command-line
+The `arguments` is a list of strings and contains the command-line
 arguments that typically come from program's user.
 
-_option-specification_ argument is the specification of valid
+`option-specification` argument is the specification of valid
 command-line options. It is a list that contains lists of the following
 format (in lambda list format):
 
     (symbol option-name &optional option-argument)
 
-The first element _symbol_ is any symbol which identifies this
+The first element `symbol` is any symbol which identifies this
 command-line option (for example keyword symbol `:help`). The identifier
 is used in function's return value to identify that this particular
 option was present in the command line.
 
-The second element _option-name_ is either
+The second element `option-name` is either
 
  1. a character specifying a short option name (for example `#\\h`,
     entered as `-h` in command line)
@@ -176,21 +176,21 @@ The second element _option-name_ is either
     as `--help` in command line). The string must be at least two
     characters long.
 
-The third element _option-argument_ is optional but if it is non-nil it
+The third element `option-argument` is optional but if it is non-nil it
 must be one of the following keyword symbols: `:required` means that
 this option requires an argument; `:optional` means that this option has
 an optional argument. Example value for this function's
-_option-specification_ argument:
+`option-specification` argument:
 
     ((:help #\\h)     ; short option -h for help (no option argument)
      (:help \"help\")  ; long option --help (no option argument)
      (:file \"file\" :required) ; --file option which requires argument
      (:debug #\\d :optional))  ; -d option with optional argument
 
-Note that several options may have the same identifier _symbol_. This
+Note that several options may have the same identifier `symbol`. This
 makes sense when short and long option represent the same meaning. See
 the `:help` keyword symbol above. All options must have unique
-_option-name_ though.
+`option-name` though.
 
 If function's key argument `options-everywhere` is nil (the default) the
 option parsing stops when the first non-option argument is found. Rest
@@ -261,7 +261,7 @@ The function returns three values:
 
  3. List of unknown options. List's items are either characters or
     strings which represent unknown short or long command-line options
-    which were not defined in the _option-specification_.
+    which were not defined in the `option-specification`.
 
 In all three return values the list's items are in the same order as
 they were in the original command line.
