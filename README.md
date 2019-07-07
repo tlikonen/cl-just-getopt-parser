@@ -122,6 +122,13 @@ Function `option-name` can be used to read option's name from the
 condition object.
 
 
+### Condition: `invalid-option-specification`
+
+`getopt` function signals this condition if its
+`option-specification` argument is invalid. Function `error-string` can
+be used to read error string from the condition object.
+
+
 ### Condition: `required-argument-missing`
 
 `getopt` function may signal this condition when it parses an option
@@ -185,6 +192,9 @@ Note that several options may have the same identifier `symbol`. This
 makes sense when short and long option represent the same meaning. See
 the `:help` keyword symbol above. All options must have unique
 `option-name` though.
+
+If `option-specification` argument is not in correct form an error of
+type `invalid-option-specification` is signaled.
 
 If function's key argument `options-everywhere` is nil (the default) the
 option parsing stops when the first non-option argument is found. Rest

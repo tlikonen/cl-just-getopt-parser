@@ -13,6 +13,8 @@
            #:argument-not-allowed
            #:required-argument-missing
            #:option-name #:option-matches
+           #:invalid-option-specification
+           #:error-string
            #:skip-option
            #:give-argument
            ))
@@ -76,29 +78,48 @@ condition object.")
      (format stream "Argument is not allowed for option \"~A\"."
              (format-option-name (option-name condition))))))
 
+(define-condition invalid-option-specification (error)
+  ((string :reader error-string :initarg :string))
+  (:documentation
+   "`getopt` function signals this condition if its
+`option-specification` argument is invalid. Function `error-string` can
+be used to read error string from the condition object.")
+  (:report (lambda (condition stream)
+             (format stream "~A" (error-string condition)))))
+
 (defun check-option-identifier (identifier)
   (assert (symbolp identifier)
-          nil "Option identifier must be a symbol."))
+          nil 'invalid-option-specification
+          :string (format nil "Option identifier ~S is not of type SYMBOL."
+                          identifier)))
 
 (defun check-short-option-character (name)
   (assert (and (graphic-char-p name)
                (not (find name " -")))
-          nil "Invalid character in short option name (~A)." name))
+          nil 'invalid-option-specification
+          :string (format nil "Invalid character in short option name (~A)."
+                          name)))
 
 (defun check-long-option-string (string)
   (assert (>= (length string) 2)
-          nil "Long option string must be at least 2 characters long.")
+          nil 'invalid-option-specification
+          :string "Long option string must be at least 2 characters long.")
+
   (assert (every (lambda (char)
                    (and (graphic-char-p char)
                         (not (find char " ="))))
                  string)
-          nil "Invalid character(s) in long option name \"~A\"."
-          string))
+          nil 'invalid-option-specification
+          :string (format nil "Invalid character(s) in long option ~
+                        name \"~A\"." string)))
 
 (defun check-option-name (name)
   (assert (or (characterp name)
               (stringp name))
-          nil "Option name must be a character or a string.")
+          nil 'invalid-option-specification
+          :string (format
+                   nil "Option name ~S is not of type CHARACTER or STRING."
+                   name))
   (etypecase name
     (character (check-short-option-character name))
     (string (check-long-option-string name))))
@@ -107,8 +128,9 @@ condition object.")
   (assert (or (null field)
               (eql :required field)
               (eql :optional field))
-          nil "Options' argument type must be symbol ~
-                NIL, :REQUIRED or :OPTIONAL."))
+          nil 'invalid-option-specification
+          :string (format nil "Options' argument type must be symbol ~
+                :REQUIRED or :OPTIONAL.")))
 
 (defun check-duplicate-names (specification)
   (let* ((names (loop :for option-spec :in specification
@@ -116,18 +138,21 @@ condition object.")
          (test (remove-duplicates names :test #'equal)))
     (assert (= (length names)
                (length test))
-            nil "Duplicate option names are not allowed.")))
+            nil 'invalid-option-specification
+            :string "Duplicate option names are not allowed.")))
 
 (defun check-option-specification (specification)
   (assert (listp specification)
-          nil "Option specification must be a list.")
+          nil 'invalid-option-specification
+          :string "Option specification must be of type LIST.")
   (loop :for option-spec :in specification
-        :do (assert (listp option-spec)
-                    nil "Option specification must consist of two- or ~
-                three-item lists.")
-            (check-option-identifier (first option-spec))
-            (check-option-name (second option-spec))
-            (check-option-argument (third option-spec)))
+     :do (assert (listp option-spec)
+                 nil 'invalid-option-specification
+                 :string (format nil "Option specification must consist of ~
+                        two- or three-item lists."))
+       (check-option-identifier (first option-spec))
+       (check-option-name (second option-spec))
+       (check-option-argument (third option-spec)))
   (check-duplicate-names specification))
 
 (defun match-long-option (name specification &key prefix)
@@ -191,6 +216,9 @@ Note that several options may have the same identifier `symbol`. This
 makes sense when short and long option represent the same meaning. See
 the `:help` keyword symbol above. All options must have unique
 `option-name` though.
+
+If `option-specification` argument is not in correct form an error of
+type `invalid-option-specification` is signaled.
 
 If function's key argument `options-everywhere` is nil (the default) the
 option parsing stops when the first non-option argument is found. Rest
