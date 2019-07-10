@@ -60,7 +60,7 @@ thorough example:
         ((ambiguous-option
            (lambda (condition)
              (format *error-output* "~A~%" condition)
-             (invoke-restart 'skip-option)))
+             (exit-program :code 1)))
          (unknown-option
            (lambda (condition)
              (format *error-output* "~A~%" condition)
